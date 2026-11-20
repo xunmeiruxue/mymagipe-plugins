@@ -1,6 +1,6 @@
 {
   "name": "tools-baidu-pan",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Baidu Netdisk's MCP tools in magpie, with its own page for the app's credentials and one authorization code",
   "type": "module",
   "main": "./index.mjs",
@@ -29,10 +29,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/YOURNAME/magpie-plugins.git",
+    "url": "git+https://github.com/xunmeiruxue/mymagipe-plugins.git",
     "directory": "mcp/baidu-pan"
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "homepage": "https://github.com/xunmeiruxue/mymagipe-plugins/tree/master/mcp/baidu-pan#readme",
+  "bugs": {
+    "url": "https://github.com/xunmeiruxue/mymagipe-plugins/issues"
+  },
+  "author": "xunmeiruxue"
 }
