@@ -10,7 +10,7 @@ name: publish
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
     paths:
       - "plugins/**"
       - "mcp/**"
@@ -27,6 +27,10 @@ concurrency: publish
 jobs:
   publish:
     runs-on: ubuntu-latest
+    # the token is asked for once; steps below use it through this name so a
+    # repo without the secret still runs green instead of red
+    env:
+      OP_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
@@ -47,9 +51,13 @@ jobs:
       # op run injects the Environment's secrets into the child process only:
       # nothing is written to disk, nothing reaches GitHub.
       - name: publish what npm doesn't have
+        if: env.OP_TOKEN != ''
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
           OP_ENVIRONMENT_ID: utvnqpr4yoqgb5vhlenw5mqvaq
           STAGE_ON_NEW: ${{ vars.STAGE_ON_NEW || '0' }}
           PROVENANCE: ${{ vars.NPM_PROVENANCE || '1' }}
         run: op run --environment "$OP_ENVIRONMENT_ID" -- bash scripts/publish.sh
+      - name: nothing to publish without the service account token
+        if: env.OP_TOKEN == ''
+        run: echo "OP_SERVICE_ACCOUNT_TOKEN is not set on this repo: add it under Settings › Secrets and variables › Actions to publish."
