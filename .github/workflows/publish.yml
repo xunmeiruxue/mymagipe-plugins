@@ -1,10 +1,9 @@
 # Publishes every package under mcp/* and plugins/* whose version npm
 # doesn't have yet: bump a package's version and merge, and it goes out.
 #
-# The npm token is not stored in GitHub. It sits in a 1Password Environment
-# and is read at run time with a service account that can only read that
-# Environment: the id comes from the OP_ENVIRONMENT_ID repository variable,
-# the service account token from the OP_SERVICE_ACCOUNT_TOKEN secret.
+# The npm token is not stored in GitHub. It sits in the 1Password Environment
+# `npm` (utvnqpr4yoqgb5vhlenw5mqvaq) and is read at run time with a service
+# account that can only read that Environment (OP_SERVICE_ACCOUNT_TOKEN).
 # Once a package exists on npm, bind it to this workflow (npm trust github …)
 # and no token is needed at all.
 name: publish
@@ -50,7 +49,7 @@ jobs:
       - name: publish what npm doesn't have
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-          OP_ENVIRONMENT_ID: ${{ vars.OP_ENVIRONMENT_ID }}
+          OP_ENVIRONMENT_ID: utvnqpr4yoqgb5vhlenw5mqvaq
           STAGE_ON_NEW: ${{ vars.STAGE_ON_NEW || '0' }}
           PROVENANCE: ${{ vars.NPM_PROVENANCE || '1' }}
         run: op run --environment "$OP_ENVIRONMENT_ID" -- bash scripts/publish.sh
