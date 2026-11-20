@@ -60,4 +60,6 @@ jobs:
         run: op run --environment "$OP_ENVIRONMENT_ID" -- bash scripts/publish.sh
       - name: nothing to publish without the service account token
         if: env.OP_TOKEN == ''
-        run: echo "OP_SERVICE_ACCOUNT_TOKEN is not set on this repo: add it under Settings › Secrets and variables › Actions to publish."
+        run: |
+          echo "OP_SERVICE_ACCOUNT_TOKEN is not set on this repo."
+          echo "Add it under Settings › Secrets and variables › Actions."
