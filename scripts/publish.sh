@@ -30,6 +30,7 @@ flag=""
 [ "${PROVENANCE:-1}" = "0" ] || flag="--provenance"
 
 have() { npm view "$1@$2" version >/dev/null 2>&1; }
+known() { npm view "$1" version >/dev/null 2>&1; }
 
 echo "npm: $(npm --version) · node: $(node --version) · auth: $([ -n "${NODE_AUTH_TOKEN:-}" ] && echo token || echo oidc)"
 
@@ -45,7 +46,7 @@ for dir in "${targets[@]}"; do
     continue
   fi
 
-  if have "$name" "0.0.0"; then
+  if known "$name"; then
     echo "ship  $name@$ver"
     [ "$dry" = "1" ] && (cd "$dir" && npm publish --dry-run --access public --provenance) && continue
     (cd "$dir" && npm publish $flag --access public)
