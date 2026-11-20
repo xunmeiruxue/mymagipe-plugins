@@ -1,0 +1,13 @@
+{
+  "name": "magpie-plugins",
+  "private": true,
+  "version": "0.0.0",
+  "workspaces": [
+    "plugins/*",
+    "mcp/*"
+  ],
+  "scripts": {
+    "pack": "bash scripts/pack.sh",
+    "release": "bash scripts/publish.sh"
+  }
+}

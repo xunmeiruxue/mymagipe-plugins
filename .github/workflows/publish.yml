@@ -1,0 +1,56 @@
+# Publishes every package under mcp/* and plugins/* whose version npm
+# doesn't have yet: bump a package's version and merge, and it goes out.
+#
+# The npm token is not stored in GitHub. It sits in a 1Password Environment
+# and is read at run time with a service account that can only read that
+# Environment: the id comes from the OP_ENVIRONMENT_ID repository variable,
+# the service account token from the OP_SERVICE_ACCOUNT_TOKEN secret.
+# Once a package exists on npm, bind it to this workflow (npm trust github …)
+# and no token is needed at all.
+name: publish
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "plugins/**"
+      - "mcp/**"
+      - "scripts/**"
+      - ".github/workflows/publish.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # OIDC: trusted publishing, and --provenance
+
+concurrency: publish
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: "https://registry.npmjs.org"
+
+      - name: test every package that has a test
+        run: |
+          for d in plugins/* mcp/*; do
+            [ -f "$d/package.json" ] || continue
+            [ -d "$d/test" ] && (cd "$d" && node test/e2e.mjs) || true
+          done
+
+      - uses: 1password/install-cli-action@v4
+
+      # op run injects the Environment's secrets into the child process only:
+      # nothing is written to disk, nothing reaches GitHub.
+      - name: publish what npm doesn't have
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          OP_ENVIRONMENT_ID: ${{ vars.OP_ENVIRONMENT_ID }}
+          STAGE_ON_NEW: ${{ vars.STAGE_ON_NEW || '0' }}
+          PROVENANCE: ${{ vars.NPM_PROVENANCE || '1' }}
+        run: op run --environment "$OP_ENVIRONMENT_ID" -- bash scripts/publish.sh

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>百度网盘</title>
+<link rel="stylesheet" href="style.css">
+<script src="_magpie/bridge.js"></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+<header>
+  <h1>百度网盘 <span id="bridge" class="badge">正在连接 magpie…</span></h1>
+  <p class="sub">这个插件把百度网盘 MCP 的工具接到 magpie。填写一次，之后 token 由它自己续。</p>
+</header>
+
+<section class="card">
+  <h2>现在的情况</h2>
+  <ul id="status" class="status">
+    <li>读取中…</li>
+  </ul>
+  <p class="hint">保存或登录之后 magpie 会重启一次插件宿主，工具大约几秒后出现在「资源库 › MCP 服务器」里。</p>
+</section>
+
+<section class="card">
+  <h2>应用凭证</h2>
+  <p class="hint">在「百度网盘开放平台 › 应用详情 › 应用凭证」里：<b>AppKey</b> 就是 client_id，<b>SecretKey</b> 就是 client_secret（AppID 不用，SignKey 也无关）。</p>
+  <label>AppKey<input id="appKey" type="text" autocomplete="off" spellcheck="false" placeholder="例如 AbCdEf…"></label>
+  <label>SecretKey<input id="secretKey" type="password" autocomplete="off" placeholder="应用凭证里的 SecretKey"></label>
+  <button id="save" class="primary" type="button">保存</button>
+  <span id="saved" class="ok"></span>
+</section>
+
+<section class="card">
+  <h2>授权一次</h2>
+  <p class="hint">点「生成链接」，在浏览器里打开并扫码；百度会停在它的页面上，把页面显示的 <b>code</b>（或地址栏里 <code>code=…</code> 的值）粘回下面。code 只能用一次、10 分钟内有效。</p>
+  <div class="row">
+    <button id="link" type="button">生成授权链接</button>
+    <button id="copy" type="button" disabled>复制</button>
+  </div>
+  <textarea id="url" rows="3" readonly placeholder="授权链接会出现在这里"></textarea>
+  <label>code<input id="code" type="text" autocomplete="off" spellcheck="false" placeholder="从百度页面复制"></label>
+  <button id="login" class="primary" type="button">用这个 code 登录</button>
+  <span id="state" class="ok"></span>
+</section>
+
+</body>
+</html>

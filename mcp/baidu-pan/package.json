@@ -1,0 +1,38 @@
+{
+  "name": "tools-baidu-pan",
+  "version": "0.2.0",
+  "description": "Baidu Netdisk's MCP tools in magpie, with its own page for the app's credentials and one authorization code",
+  "type": "module",
+  "main": "./index.mjs",
+  "files": [
+    "index.mjs",
+    "page",
+    "README.md"
+  ],
+  "keywords": [
+    "magpie",
+    "magpie-plugin",
+    "mcp",
+    "baidu"
+  ],
+  "license": "MIT",
+  "magpie": {
+    "name": "Baidu Netdisk",
+    "summary": {
+      "en": "Baidu Netdisk's MCP tools, the sign-in kept fresh by magpie",
+      "zh": "百度网盘 MCP 的工具，登录由 magpie 自己续"
+    },
+    "page": {
+      "title": "百度网盘",
+      "file": "page/index.html"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YOURNAME/magpie-plugins.git",
+    "directory": "mcp/baidu-pan"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

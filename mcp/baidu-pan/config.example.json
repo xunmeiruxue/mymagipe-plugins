@@ -1,0 +1,11 @@
+{
+  "url": "https://mcp-pan.baidu.com/sse",
+  "transport": "sse",
+  "oauth": {
+    "tokenUrl": "https://openapi.baidu.com/oauth/2.0/token",
+    "appKey": "",
+    "secretKey": "",
+    "redirectUri": "oob",
+    "code": ""
+  }
+}
