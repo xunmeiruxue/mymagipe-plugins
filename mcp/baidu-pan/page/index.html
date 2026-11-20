@@ -15,34 +15,34 @@
 </header>
 
 <section class="card">
-  <h2>现在的情况</h2>
-  <ul id="status" class="status">
-    <li>读取中…</li>
-  </ul>
-  <p class="hint">保存或登录之后 magpie 会重启一次插件宿主，工具大约几秒后出现在「资源库 › MCP 服务器」里。</p>
+  <h2>现在的情况 <button id="again" class="mini" type="button">重新读取</button></h2>
+  <ul id="status" class="status"><li>读取中…</li></ul>
 </section>
 
 <section class="card">
   <h2>应用凭证</h2>
-  <p class="hint">在「百度网盘开放平台 › 应用详情 › 应用凭证」里：<b>AppKey</b> 就是 client_id，<b>SecretKey</b> 就是 client_secret（AppID 不用，SignKey 也无关）。</p>
+  <p class="hint">开放平台 › 应用详情 › 应用凭证：<b>AppKey</b> 是 client_id，<b>SecretKey</b> 是 client_secret（AppID、SignKey 不用）。</p>
   <label>AppKey<input id="appKey" type="text" autocomplete="off" spellcheck="false" placeholder="例如 AbCdEf…"></label>
   <label>SecretKey<input id="secretKey" type="password" autocomplete="off" placeholder="应用凭证里的 SecretKey"></label>
-  <button id="save" class="primary" type="button">保存</button>
-  <span id="saved" class="ok"></span>
+  <div class="row">
+    <button id="save" class="primary" type="button">保存</button>
+    <span id="saved" class="note"></span>
+  </div>
 </section>
 
 <section class="card">
   <h2>授权一次</h2>
-  <p class="hint">点「生成链接」，在浏览器里打开并扫码；百度会停在它的页面上，把页面显示的 <b>code</b>（或地址栏里 <code>code=…</code> 的值）粘回下面。code 只能用一次、10 分钟内有效。</p>
+  <p class="hint">点「生成链接」，在浏览器打开并扫码；百度会停在它的页面上，把 <b>code</b>（或地址栏里 <code>code=…</code>）粘回下面。code 只能用一次、10 分钟内有效。</p>
   <div class="row">
     <button id="link" type="button">生成授权链接</button>
     <button id="copy" type="button" disabled>复制</button>
   </div>
   <textarea id="url" rows="3" readonly placeholder="授权链接会出现在这里"></textarea>
   <label>code<input id="code" type="text" autocomplete="off" spellcheck="false" placeholder="从百度页面复制"></label>
-  <button id="login" class="primary" type="button">用这个 code 登录</button>
-  <span id="state" class="ok"></span>
+  <div class="row">
+    <button id="login" class="primary" type="button">用这个 code 登录</button>
+    <span id="state" class="note"></span>
+  </div>
 </section>
-
 </body>
 </html>
