@@ -1,6 +1,6 @@
 {
   "name": "tools-baidu-pan",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Baidu Netdisk's MCP tools in magpie, with its own page for the app's credentials and one authorization code",
   "type": "module",
   "main": "./index.mjs",

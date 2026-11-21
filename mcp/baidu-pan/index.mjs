@@ -80,12 +80,28 @@ export default async function Bridge(_input, options) {
 
 // ---- the token -------------------------------------------------------------
 
+// tokenFile is where the sign-in lives. It sits beside magpie's own files,
+// not inside this package: npm replacing the package on an update would take
+// the sign-in with it (that is exactly how a working one was lost).
+function tokenPath(cfg) {
+  if (cfg.tokenFile) return cfg.tokenFile
+  const dir = path.join(process.cwd(), "plugin-data", "tools-baidu-pan")
+  try { fs.mkdirSync(dir, { recursive: true }) } catch {}
+  const file = path.join(dir, "token.json")
+  // a sign-in from an older version, kept inside the package, is carried over
+  const old = path.join(HERE, "token.json")
+  try {
+    if (!fs.existsSync(file) && fs.existsSync(old)) fs.copyFileSync(old, file)
+  } catch {}
+  return file
+}
+
 function state(cfg, fromOptions) {
   return {
     cfg,
     cfgFile: path.join(HERE, "config.json"),
     fromOptions: !!fromOptions,
-    file: cfg.tokenFile || path.join(HERE, "token.json"),
+    file: tokenPath(cfg),
     token: readToken(cfg),
     conn: null,
     // one refresh at a time: Baidu's refresh_token is good for one use, so
@@ -98,7 +114,7 @@ function readToken(cfg) {
   const o = cfg.oauth && typeof cfg.oauth === "object" ? cfg.oauth : {}
   const t = { access: o.accessToken || "", refresh: o.refreshToken || "", exp: 0, code: "" }
   try {
-    const saved = JSON.parse(fs.readFileSync(cfg.tokenFile || path.join(HERE, "token.json"), "utf8"))
+    const saved = JSON.parse(fs.readFileSync(tokenPath(cfg), "utf8"))
     if (saved.access) t.access = saved.access
     if (saved.refresh) t.refresh = saved.refresh
     if (saved.exp) t.exp = Number(saved.exp) || 0
@@ -144,17 +160,26 @@ async function renew(st, force) {
   // unless it is the one already traded, which the options still carry
   if (o.code && o.code !== t.code) {
     if (!tokenUrl) throw new Error("oauth.code is given but no oauth.tokenUrl to trade it at")
-    const got = await exchange(st, tokenUrl, {
-      grant_type: "authorization_code",
-      code: o.code,
-      client_id: id,
-      client_secret: secret,
-      redirect_uri: o.redirectUri || "oob",
-    })
-    st.token.code = o.code
-    saveToken(st)
-    clearCode(st)
-    return got
+    try {
+      const got = await exchange(st, tokenUrl, {
+        grant_type: "authorization_code",
+        code: o.code,
+        client_id: id,
+        client_secret: secret,
+        redirect_uri: o.redirectUri || "oob",
+      })
+      st.token.code = o.code
+      saveToken(st)
+      clearCode(st)
+      return got
+    } catch (e) {
+      // a code good for 10 minutes goes stale in the options; remembering it
+      // stops every load from spending another try on it
+      st.token.code = o.code
+      saveToken(st)
+      if (!t.refresh && !o.refreshToken) throw e
+      log("that code didn't work (" + why(e) + "); using the token already signed in")
+    }
   }
   if (t.refresh || o.refreshToken) {
     if (!tokenUrl) {
